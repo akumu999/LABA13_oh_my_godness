@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+
+        android:background="@color/maincolor1"
+        android:elevation="10dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+        <TextView
+            android:id="@+id/textView5"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/control_expenses"
+            android:textSize="30sp"
+            android:textStyle="bold"
+
+            android:textColor="@color/white"
+            android:shadowRadius="1"
+            android:shadowDy="3"
+            android:shadowDx="1"
+            android:shadowColor="@color/maincolorText1"
+
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editText_name"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="108dp"
+
+        android:backgroundTint="@color/maincolor2"
+        android:hint="@string/expense_name"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/editText_cost"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+
+        android:backgroundTint="@color/maincolor2"
+        android:hint="@string/cost"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_name"
+
+        android:inputType="number"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/editText_type"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="18dp"
+        android:backgroundTint="@color/maincolor2"
+
+        android:hint="@string/expense_type"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_cost"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/add_button"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="108dp"
+        android:backgroundTint="@color/maincolor1"
+        android:text="@string/add"
+        android:textSize="18sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_type" />
+
+    <Button
+        android:id="@+id/show_button"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/maincolor1"
+        android:text="@string/showInfo"
+        android:textSize="18sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_button" />
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/red_button"
+        android:text="@string/delete"
+        android:textSize="18sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/show_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

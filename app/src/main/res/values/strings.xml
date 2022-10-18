@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PRAKT12</string>
+    <string name="welcome">Добро пожаловать</string>
+    <string name="control_expenses">Учет расходов</string>
+    <string name="expense_name">Введите название расхода</string>
+    <string name="expense_type">Введите тип расхода</string>
+    <string name="cost">Введите цену расхода</string>
+    <string name="add">Добавить в список</string>
+    <string name="showInfo">Показать информацию</string>
+    <string name="delete">Удалить</string>
+    <string name="expenses_book">Учет расходов</string>
+    <string name="cont">Продолжить</string>
+
+</resources>
