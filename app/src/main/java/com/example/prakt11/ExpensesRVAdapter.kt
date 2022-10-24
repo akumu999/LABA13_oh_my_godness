@@ -21,10 +21,8 @@ class ExpensesRVAdapter(context: Context?, val data:MutableList<Expenses>, val d
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
         val item = data[position]
-        val itemType = dataTypes[position]
         holder.name.text = item.nameExpenses
         holder.cost.text = item.costExpenses.toString()
-        holder.type.text = itemType.typeExpenses
     }
 
     override fun getItemCount(): Int = data.size

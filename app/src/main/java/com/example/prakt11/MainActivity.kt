@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.room.Room
@@ -19,6 +22,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.math.exp
 
 class MainActivity : AppCompatActivity() {
     private var position: Int = -1
@@ -32,11 +36,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btn_add : Button
     private lateinit var btn_show : Button
     private lateinit var btn_delete : Button
-
+    private lateinit var spinner: Spinner
     private lateinit var name : EditText
     private lateinit var costEd : EditText
     private lateinit var typeExpenses : EditText
     private var typesList: MutableList<TypeExpenses> = mutableListOf()
+    private var expensesList: MutableList<Expenses> = mutableListOf()
+    var isExpensesDublicate : Boolean = false
+    var isTypesDublicate : Boolean = false
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         name = findViewById<EditText>(R.id.editText_name)
         costEd = findViewById<EditText>(R.id.editText_cost)
         typeExpenses = findViewById<EditText>(R.id.editText_type)
-
+        spinner = findViewById(R.id.spinnerText_type2)
         database = Room.databaseBuilder(this, ExpensesDatabase::class.java, DATABASE_NAME).build()
 
         position = intent.getIntExtra("pos", -1)
@@ -56,43 +63,27 @@ class MainActivity : AppCompatActivity() {
         val uuidTypeText = intent.getStringExtra("uuidType")
         converterUUID(uuidText, uuidTypeText)
 
-
-
+        getExpenses()
         selectEditText()
+        if(position==-1)
+        {
+            typeExpenses.visibility = View.VISIBLE
+            spinner.visibility = View.INVISIBLE
+        }
+        else
+        {
+            addTypesSpinner()
+            typeExpenses.visibility = View.INVISIBLE
+        }
         btn_add.setOnClickListener{
-            var repeat: Int = 0
-            try {
-                var database2:ExpensesDatabase = Room.databaseBuilder(this, ExpensesDatabase::class.java, DATABASE_NAME).build()
-                val edao=database2.expensesDAO()
-                edao.getAllTypesExpenses().observe(this, androidx.lifecycle.Observer {
-                    typesList.addAll(it)
-                    Log.d("123zxc",it.toString())
-                })
-            }catch (e: Exception){
-
-            }
-            var database2:ExpensesDatabase = Room.databaseBuilder(this, ExpensesDatabase::class.java, DATABASE_NAME).build()
-            val edao=database2.expensesDAO()
-            edao.getAllTypesExpenses().observe(this, androidx.lifecycle.Observer {
-                typesList.addAll(it)
-                Log.d("123zxc",it.toString())
-            })
-
-            typesList.forEach()
-            {
-                if(it.typeExpenses==typeExpenses.text.toString()){
-                    repeat++
-                }
-            }
-            if(repeat>0){
-                Toast.makeText(this, "Такой тип расходов уже имеется в списке", Toast.LENGTH_LONG).show()
-            }
-            if (position == -1&&repeat==0) {
+            if (position == -1) {
                 if (name.text.toString() != "" && costEd.text.toString() != "" && typeExpenses.text.toString() != "") {
                     addExpenses(name.text.toString(), costEd.text.toString().toInt(), typeExpenses.text.toString())
                     name.setText("")
                     costEd.setText("")
                     typeExpenses.setText("")
+                     isExpensesDublicate  = false
+                     isTypesDublicate  = false
                 }
                 else {
                     Toast.makeText(this, "Нельзя добавить пустую строку", Toast.LENGTH_SHORT).show()
@@ -100,12 +91,12 @@ class MainActivity : AppCompatActivity() {
             }
             else if(position>-1){
                 if (name.text.toString() != "" && costEd.text.toString() != "" && typeExpenses.text.toString() != ""){
+
+
                     executor.execute {
-                        database?.expensesDAO()?.updateTypeExpenses(
-                            TypeExpenses(uuidTypeExpenses!!, typeExpenses.text.toString())
-                        )
+                        val uuid = database?.expensesDAO()?.getType(spinner.selectedItem.toString())
                         database?.expensesDAO()?.updateExpenses(
-                            Expenses(uuidExpenses!!, name.text.toString(), costEd.text.toString().toInt(), uuidTypeExpenses!!)
+                            Expenses(uuidExpenses!!, name.text.toString(), costEd.text.toString().toInt(), uuid!!)
                         )
                     }
                     Toast.makeText(this, "Значения изменены", Toast.LENGTH_SHORT).show()
@@ -167,15 +158,75 @@ class MainActivity : AppCompatActivity() {
     private fun addExpenses(name: String, cost: Int, nameType:String)
     {
         val uuidType = UUID.randomUUID()
-        executor.execute {
-            database?.expensesDAO()?.addTypeExpenses(
-                TypeExpenses(uuidType, nameType)
-            )
-            database?.expensesDAO()?.addExpenses(
-                Expenses(UUID.randomUUID(), name, cost, uuidType)
-            )
+        val typeExpenses = TypeExpenses(uuidType, nameType)
+        val expenses = Expenses(UUID.randomUUID(), name, cost, uuidType)
+        expensesList.forEach(){
+            if(it.nameExpenses==expenses.nameExpenses)
+            {
+                isExpensesDublicate=true
+            }
+        }
+        typesList.forEach(){
+            if(it.typeExpenses==typeExpenses.typeExpenses)
+            {
+                isTypesDublicate=true
+            }
+        }
+        if(!isExpensesDublicate&&!isTypesDublicate)
+        {
+            executor.execute {
+                database?.expensesDAO()?.addTypeExpenses(
+                    TypeExpenses(uuidType, nameType)
+                )
+                database?.expensesDAO()?.addExpenses(
+                     Expenses(UUID.randomUUID(), name, cost, uuidType)
+                )
+            }
+        }
+        else if(!isExpensesDublicate&&isTypesDublicate)
+        {
+            executor.execute {
+                val uuid = database?.expensesDAO()?.getType(nameType)
+                database?.expensesDAO()?.addExpenses(
+                   Expenses(UUID.randomUUID(), name, cost, uuid!!)
+                )
+            }
+        }
+        else
+        {
+            Toast.makeText(this, "Уже содержится",Toast.LENGTH_SHORT).show()
         }
     }
+    private fun getExpenses() {
+        expensesList.clear()
+        typesList.clear()
+        database?.expensesDAO()?.getAllTypesExpenses()?.observe(this, androidx.lifecycle.Observer {
+            typesList.addAll(it)
+        })
+        database?.expensesDAO()?.getAllExpenses()?.observe(this, androidx.lifecycle.Observer {
+            expensesList.addAll(it)
+        })
+    }
 
+    override fun onResume() {
+        super.onResume()
+        isExpensesDublicate  = false
+        isTypesDublicate  = false
+        getExpenses()
+    }
+    private fun addTypesSpinner(){
+        database?.expensesDAO()?.getTypeString()?.observe(this, androidx.lifecycle.Observer { it ->
+            spinner.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, it)
+        })
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                Toast.makeText(applicationContext, "$position ${spinner.selectedItem}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
+    }
 }
 

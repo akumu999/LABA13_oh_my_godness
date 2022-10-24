@@ -12,6 +12,10 @@ interface ExpensesDAO {
     fun getAllTypesExpenses(): LiveData<MutableList<TypeExpenses>>
     @Query("SELECT typeExpenses FROM $TYPE_TABLE WHERE uuid =:id")
     fun getTypeExpensesName(id:UUID): String
+    @Query("SELECT uuid FROM $TYPE_TABLE WHERE typeExpenses =:name")
+    fun getType(name: String):UUID
+    @Query("SELECT typeExpenses FROM $TYPE_TABLE")
+    fun getTypeString():LiveData<MutableList<String>>
     @Update
     fun updateTypeExpenses (type: TypeExpenses)
     @Insert

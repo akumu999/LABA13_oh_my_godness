@@ -50,7 +50,7 @@ class MainActivity2 : AppCompatActivity() {
                 val intent = Intent(this@MainActivity2, MainActivity::class.java)
                 intent.putExtra("pos", position)
                 intent.putExtra("uuid", expensesList[position].uuid.toString())
-                intent.putExtra("uuidType", typesList[position].uuid.toString())
+                intent.putExtra("uuidType", expensesList[position].typeExpenses.toString())
                 startActivity(intent)
                 Toast.makeText(this@MainActivity2, "position: $position", Toast.LENGTH_SHORT).show()
             }
