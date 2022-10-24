@@ -116,9 +116,6 @@ class MainActivity : AppCompatActivity() {
                 database?.expensesDAO()?.deleteExpenses(
                     Expenses(uuidExpenses!!, name.text.toString(), costEd.text.toString().toInt(), uuidTypeExpenses!!)
                 )
-                database?.expensesDAO()?.deleteType(
-                    TypeExpenses(uuidTypeExpenses!!, typeExpenses.text.toString())
-                )
             }
             name.setText("")
             costEd.setText("")
